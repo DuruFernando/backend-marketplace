@@ -28,7 +28,17 @@ Content-Type: application/json
 
 ###
 
-# @name authenticate
+# @name category
+POST {{baseURL}}/categories
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "title": "Móvel"
+}
+###
+
+# @name product
 POST {{baseURL}}/products
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
