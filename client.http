@@ -49,3 +49,15 @@ Authorization: Bearer {{authToken}}
 }
 
 ###
+
+# @name fetch_product
+GET {{baseURL}}/products?page=1&q=
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+
+}
+
+###
+
