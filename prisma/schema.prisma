@@ -36,18 +36,18 @@ model Category {
   @@map("categories")
 }
 
-// enum RoomSharingType {
-//   Anunciado
-//   Vendido
-//   Cancelado
-// }
+enum Status {
+  available
+  sold
+  cancelled
+}
 
 model Product {
   id           String    @id @default(uuid())
   title        String
   description  String
   priceInCents Int       @map("price_in_cents")
-  status       String
+  status       Status    @default(available)
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
   ownerId      String    @map("owner_id")

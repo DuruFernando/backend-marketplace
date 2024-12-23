@@ -1,5 +1,3 @@
-
-
 @baseURL = http://localhost:3333
 @authToken = {{authenticate.response.body.access_token}}
 
@@ -31,11 +29,11 @@ Content-Type: application/json
 # @name category
 POST {{baseURL}}/categories
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
 
 {
-    "title": "Móvel"
+    "title": "Imóvel"
 }
+
 ###
 
 # @name product
@@ -44,5 +42,10 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-
+    "title": "Mesa",
+    "description": "Mesa 120cm redonda com 4 cadeiras",
+    "categoryId": "3b895ca4-a022-4058-a252-bf3038118f75",
+    "priceInCents": 159999
 }
+
+###
