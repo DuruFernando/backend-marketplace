@@ -46,7 +46,7 @@ model Product {
   id           String    @id @default(uuid())
   title        String
   description  String
-  priceInCents Decimal   @map("price_in_cents")
+  priceInCents Int       @map("price_in_cents")
   status       String
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
