@@ -28,7 +28,7 @@ describe('create-category.controller (E2E)', () => {
 
     expect(response.statusCode).toBe(201)
 
-    const userOnDatabase = await prisma.category.findUnique({
+    const userOnDatabase = await prisma.category.findFirst({
       where: {
         slug: 'imovel',
       },

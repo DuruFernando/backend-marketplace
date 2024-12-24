@@ -34,16 +34,26 @@ export class CreateAccountController {
       throw new ConflictException('password does not match')
     }
 
-    const userWithSameWmail = await this.prisma.user.findUnique({
+    const userWithSameEmail = await this.prisma.user.findUnique({
       where: {
         email,
       },
     })
 
-    if (userWithSameWmail) {
+    if (userWithSameEmail) {
       throw new ConflictException(
         'user with same e-mail address already exists',
       )
+    }
+
+    const userWithSamePhone = await this.prisma.user.findUnique({
+      where: {
+        phone,
+      },
+    })
+
+    if (userWithSamePhone) {
+      throw new ConflictException('user with same phone number already exists')
     }
 
     const hashedPassword = await hash(password, 8)

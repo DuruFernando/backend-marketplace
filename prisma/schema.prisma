@@ -16,11 +16,12 @@ datasource db {
 model User {
   id       String @id @default(uuid())
   name     String
-  phone    String
+  phone    String @unique
   email    String @unique
   password String
 
-  products Product[]
+  products      Product[]
+  ProductsViews ProductView[]
 
   @@map("users")
 }
@@ -28,7 +29,7 @@ model User {
 model Category {
   id        String    @id @default(uuid())
   title     String
-  slug      String    @unique
+  slug      String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
   products  Product[]
@@ -48,13 +49,28 @@ model Product {
   description  String
   priceInCents Int       @map("price_in_cents")
   status       Status    @default(available)
+  soldAt       DateTime? @map("sold_at")
+  availableAt  DateTime? @default(now()) @map("available_at")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
   ownerId      String    @map("owner_id")
   categoryId   String    @map("category_id")
 
-  owner    User     @relation(fields: [ownerId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
+  owner         User          @relation(fields: [ownerId], references: [id])
+  category      Category      @relation(fields: [categoryId], references: [id])
+  ProductsViews ProductView[]
 
   @@map("products")
+}
+
+model ProductView {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  viewerId  String   @map("viewer_id")
+  productId String   @map("product_id")
+
+  viewer  User    @relation(fields: [viewerId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("products_views")
 }

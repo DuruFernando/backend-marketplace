@@ -8,6 +8,20 @@ import { PrismaSellerMapper } from '../mappers/prisma-seller-mapper'
 export class PrismaSellerRepository implements SellersRepository {
   constructor(private prisma: PrismaService) {}
 
+  async findByPhone(phone: string): Promise<Seller | null> {
+    const seller = await this.prisma.user.findUnique({
+      where: {
+        phone,
+      },
+    })
+
+    if (!seller) {
+      return null
+    }
+
+    return PrismaSellerMapper.toDomain(seller)
+  }
+
   async findByEmail(email: string): Promise<Seller | null> {
     const seller = await this.prisma.user.findUnique({
       where: {

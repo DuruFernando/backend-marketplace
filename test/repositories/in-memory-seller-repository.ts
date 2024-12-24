@@ -5,6 +5,16 @@ import { Seller } from '../../src/domain/forum/enterprise/entities/seller'
 export class InMemorySellerRepository implements SellersRepository {
   public items: Seller[] = []
 
+  async findByPhone(phone: string) {
+    const seller = this.items.find((item) => item.phone === phone)
+
+    if (!seller) {
+      return null
+    }
+
+    return seller
+  }
+
   async findByEmail(email: string) {
     const seller = this.items.find((item) => item.email === email)
 
