@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode, Query, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt.auth.guard'
-import { ZodValidationPipe } from 'src/pipes/zod-validation-pipe'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { JwtAuthGuard } from '../auth/jwt.auth.guard'
+import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
+import { PrismaService } from '../prisma/prisma.service'
 import { z } from 'zod'
 
 const pageQueryParamsSchema = z
@@ -28,6 +28,8 @@ export class FetchAllProductsController {
     @Query('page', pageQueryValidationPipe) page: PageQueryParamSchema,
     @Query('q', searchQueryValidationPipe) search: SearchQueryParamSchema,
   ) {
+    const perPage = 20
+
     const products = await this.prisma.product.findMany({
       where: {
         status: 'available',
@@ -46,8 +48,8 @@ export class FetchAllProductsController {
           },
         ],
       },
-      take: 1,
-      skip: (page - 1) * 1,
+      take: perPage,
+      skip: (page - 1) * perPage,
       orderBy: {
         createdAt: 'desc',
       },

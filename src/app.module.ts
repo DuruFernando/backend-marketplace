@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { PrismaService } from './prisma/prisma.service'
 import { CreateAccountController } from './controllers/create-account.controller'
 import { ConfigModule } from '@nestjs/config'
 import { envSchema } from './env'
@@ -8,6 +7,7 @@ import { AuthenticateController } from './controllers/authenticate.controller'
 import { CreateProductController } from './controllers/create-product.controller'
 import { CreateCategoryController } from './controllers/create-category.controller'
 import { FetchAllProductsController } from './controllers/fetch-all-products.controller'
+import { PrismaService } from './prisma/prisma.service'
 
 @Module({
   imports: [
