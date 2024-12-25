@@ -36,7 +36,22 @@ export class PrismaSellerRepository implements SellersRepository {
     return PrismaSellerMapper.toDomain(seller)
   }
 
-  create(seller: Seller): Promise<void> {
-    throw new Error('Method not implemented.')
+  async create(seller: Seller): Promise<void> {
+    const data = PrismaSellerMapper.toPersistence(seller)
+
+    await this.prisma.user.create({
+      data,
+    })
+  }
+
+  async save(seller: Seller): Promise<void> {
+    const data = PrismaSellerMapper.toPersistence(seller)
+
+    await this.prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data,
+    })
   }
 }

@@ -6,6 +6,8 @@ export interface SellerProps {
   email: string
   phone: string
   password: string
+  createdAt?: Date
+  updatedAt?: Date | null
 }
 
 export class Seller extends Entity<SellerProps> {
@@ -23,6 +25,14 @@ export class Seller extends Entity<SellerProps> {
 
   get password() {
     return this.props.password
+  }
+
+  get createdAt() {
+    return this.props.createdAt
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt
   }
 
   static create(props: SellerProps, id?: UniqueEntityID) {

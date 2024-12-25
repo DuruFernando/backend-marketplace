@@ -1,4 +1,4 @@
-import { User as PrismaSeller } from '@prisma/client'
+import { Prisma, User as PrismaSeller } from '@prisma/client'
 import { Seller } from '../../../../../src/domain/forum/enterprise/entities/seller'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 
@@ -10,8 +10,21 @@ export class PrismaSellerMapper {
         email: raw.email,
         phone: raw.phone,
         password: raw.password,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     )
+  }
+
+  static toPersistence(seller: Seller): Prisma.UserUncheckedCreateInput {
+    return {
+      name: seller.name,
+      email: seller.email,
+      phone: seller.phone,
+      password: seller.password,
+      createdAt: seller.createdAt,
+      updatedAt: seller.updatedAt,
+    }
   }
 }
