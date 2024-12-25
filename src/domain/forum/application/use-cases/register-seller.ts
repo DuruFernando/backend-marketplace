@@ -1,4 +1,4 @@
-import { SellersRepository } from '../repositories/seller-repository'
+import { SellerRepository } from '../repositories/seller-repository'
 import { Either, left, right } from '../../../../core/either'
 import { Injectable } from '@nestjs/common'
 import { Seller } from '../../enterprise/entities/seller'
@@ -22,7 +22,7 @@ type RegisterSellerUseCaseResponse = Either<
 @Injectable()
 export class RegisterSellerUseCase {
   constructor(
-    private sellersRepository: SellersRepository,
+    private sellersRepository: SellerRepository,
     private hashGenerator: HasherGenerator,
   ) {}
 

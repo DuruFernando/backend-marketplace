@@ -1,11 +1,11 @@
 import { Seller } from 'src/domain/forum/enterprise/entities/seller'
-import { SellersRepository } from '../../../../../src/domain/forum/application/repositories/seller-repository'
+import { SellerRepository } from '../../../../../src/domain/forum/application/repositories/seller-repository'
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { PrismaSellerMapper } from '../mappers/prisma-seller-mapper'
 
 @Injectable()
-export class PrismaSellerRepository implements SellersRepository {
+export class PrismaSellerRepository implements SellerRepository {
   constructor(private prisma: PrismaService) {}
 
   async findByPhone(phone: string): Promise<Seller | null> {

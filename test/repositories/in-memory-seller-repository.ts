@@ -1,8 +1,8 @@
-import { SellersRepository } from '../../src/domain/forum/application/repositories/seller-repository'
+import { SellerRepository } from '../../src/domain/forum/application/repositories/seller-repository'
 import { DomainEvents } from '../../src/core/events/domain-events'
 import { Seller } from '../../src/domain/forum/enterprise/entities/seller'
 
-export class InMemorySellerRepository implements SellersRepository {
+export class InMemorySellerRepository implements SellerRepository {
   public items: Seller[] = []
 
   async findByPhone(phone: string) {
@@ -27,6 +27,14 @@ export class InMemorySellerRepository implements SellersRepository {
 
   async create(seller: Seller) {
     this.items.push(seller)
+
+    DomainEvents.dispatchEventsForAggregate(seller.id)
+  }
+
+  async save(seller: Seller) {
+    const itemIndex = this.items.findIndex((item) => item.id === seller.id)
+
+    this.items[itemIndex] = seller
 
     DomainEvents.dispatchEventsForAggregate(seller.id)
   }
