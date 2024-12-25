@@ -2,7 +2,6 @@ import { Category } from 'src/domain/forum/enterprise/entities/category'
 import { CategoryRepository } from '../../../../../src/domain/forum/application/repositories/category-repository'
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
-import { PaginationParams } from 'src/core/repositories/pagination-params'
 import { PrismaCategoryMapper } from '../mappers/prisma-category-mapper'
 
 @Injectable()
@@ -23,13 +22,11 @@ export class PrismaCategoryRepository implements CategoryRepository {
     return PrismaCategoryMapper.toDomain(category)
   }
 
-  async findMany({ page }: PaginationParams): Promise<Category[] | null> {
+  async findAll(): Promise<Category[]> {
     const categories = await this.prisma.category.findMany({
       orderBy: {
         createdAt: 'desc',
       },
-      take: 20,
-      skip: (page - 1) * 20,
     })
 
     return categories.map(PrismaCategoryMapper.toDomain)
