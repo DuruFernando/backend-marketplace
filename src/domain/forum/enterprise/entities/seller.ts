@@ -2,10 +2,11 @@ import { Entity } from '../../../../core/entities/entity'
 import { UniqueEntityID } from '../../../../core/entities/unique-entity-id'
 
 export interface SellerProps {
+  id?: UniqueEntityID
   name: string
   email: string
   phone: string
-  password: string
+  password?: string
   createdAt?: Date
   updatedAt?: Date | null
 }

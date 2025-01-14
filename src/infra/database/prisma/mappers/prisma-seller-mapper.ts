@@ -17,12 +17,26 @@ export class PrismaSellerMapper {
     )
   }
 
+  static toDomainMe(raw: PrismaSeller): Seller {
+    return Seller.create(
+      {
+        id: new UniqueEntityID(raw.id),
+        name: raw.name,
+        email: raw.email,
+        phone: raw.phone,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
+      },
+      new UniqueEntityID(raw.id),
+    )
+  }
+
   static toPersistence(seller: Seller): Prisma.UserUncheckedCreateInput {
     return {
       name: seller.name,
       email: seller.email,
       phone: seller.phone,
-      password: seller.password,
+      password: seller.password as string,
       createdAt: seller.createdAt,
       updatedAt: seller.updatedAt,
     }

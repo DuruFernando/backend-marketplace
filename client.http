@@ -26,6 +26,17 @@ Content-Type: application/json
 
 ###
 
+# @name seller
+GET {{baseURL}}/sellers/me
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+
+}
+
+###
+
 # @name category
 POST {{baseURL}}/categories
 Content-Type: application/json
