@@ -8,9 +8,9 @@ import { z } from 'zod'
 
 const createProductBodySchema = z.object({
   title: z.string(),
-  categoryId: z.string().uuid(),
   description: z.string(),
   priceInCents: z.coerce.number(),
+  categoryId: z.string().uuid(),
 })
 
 const bodyValidationBody = new ZodValidationPipe(createProductBodySchema)

@@ -53,10 +53,10 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-    "title": "Mesa",
-    "description": "Mesa 120cm redonda com 4 cadeiras",
+    "title": "Bola de futsal",
+    "description": "Bola oficial nike",
     "categoryId": "3b895ca4-a022-4058-a252-bf3038118f75",
-    "priceInCents": 159999
+    "priceInCents": 25999
 }
 
 ###
