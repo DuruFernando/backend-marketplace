@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { Env } from '../env'
+import { EnvService } from '../env/env.service'
 import { JwtStrategy } from './jwt.strategy'
 
 @Module({
@@ -11,9 +11,9 @@ import { JwtStrategy } from './jwt.strategy'
     JwtModule.registerAsync({
       inject: [ConfigService],
       global: true,
-      useFactory(config: ConfigService<Env, true>) {
-        const privateKey = config.get('JWT_PRIVATE_KEY', { infer: true })
-        const publicKey = config.get('JWT_PUBLIC_KEY', { infer: true })
+      useFactory(env: EnvService) {
+        const privateKey = env.get('JWT_PRIVATE_KEY')
+        const publicKey = env.get('JWT_PUBLIC_KEY')
 
         return {
           signOptions: { algorithm: 'RS256' },
@@ -23,6 +23,6 @@ import { JwtStrategy } from './jwt.strategy'
       },
     }),
   ],
-  providers: [JwtStrategy],
+  providers: [JwtStrategy, EnvService],
 })
 export class AuthModule {}

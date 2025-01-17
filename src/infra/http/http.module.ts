@@ -7,9 +7,13 @@ import { FetchAllProductsController } from './controllers/fetch-all-products.con
 import { DatabaseModule } from '../database/database.module'
 import { FetchSellerProfileController } from './controllers/fetch-seller-profile.controller'
 import { FetchSellerProfileUseCase } from '../../domain/forum/application/use-cases/fetch-seller-profile'
+import { UploadAttachmentController } from './controllers/upload-attachment.controller'
+import { StorageModule } from '../storage/storage.module'
+import { UploadAndCreateAttachmentUseCase } from '../../domain/forum/application/use-cases/upload-and-create-attachment'
+import { CreateProductUseCase } from '../../domain/forum/application/use-cases/create-product'
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, StorageModule],
   controllers: [
     CreateAccountController,
     AuthenticateController,
@@ -17,7 +21,12 @@ import { FetchSellerProfileUseCase } from '../../domain/forum/application/use-ca
     CreateProductController,
     FetchAllProductsController,
     FetchSellerProfileController,
+    UploadAttachmentController,
   ],
-  providers: [FetchSellerProfileUseCase],
+  providers: [
+    FetchSellerProfileUseCase,
+    UploadAndCreateAttachmentUseCase,
+    CreateProductUseCase,
+  ],
 })
 export class HttpModule {}

@@ -4,6 +4,8 @@ import { Product } from '../../enterprise/entities/product'
 import { ProductRepository } from '../repositories/product-repository'
 import { ProductAlreadyExistsError } from './errors/product-already-exists-error'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { ProductAttachment } from '../../enterprise/entities/product-attachment'
+import { ProductAttachmentList } from '../../enterprise/entities/product-attachment-list'
 
 interface CreateProductUseCaseRequest {
   title: string
@@ -14,6 +16,7 @@ interface CreateProductUseCaseRequest {
   availableAt?: Date | null
   ownerId: string
   categoryId: string
+  attachmentsIds: string[]
 }
 
 type CreateProductUseCaseResponse = Either<
@@ -36,6 +39,7 @@ export class CreateProductUseCase {
     availableAt,
     ownerId,
     categoryId,
+    attachmentsIds,
   }: CreateProductUseCaseRequest): Promise<CreateProductUseCaseResponse> {
     const product = Product.create({
       title,
@@ -47,6 +51,15 @@ export class CreateProductUseCase {
       ownerId: new UniqueEntityID(ownerId),
       categoryId: new UniqueEntityID(categoryId),
     })
+
+    const productAttachments = attachmentsIds.map((attachmentId) => {
+      return ProductAttachment.create({
+        attachmentId: new UniqueEntityID(attachmentId),
+        productId: product.id,
+      })
+    })
+
+    product.attachments = new ProductAttachmentList(productAttachments)
 
     await this.productRepository.create(product)
 

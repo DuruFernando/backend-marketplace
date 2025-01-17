@@ -1,16 +1,24 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { CurrentUser } from '../../auth/current-user-decorator'
 import { JwtAuthGuard } from '../../auth/jwt.auth.guard'
 import { UserPayload } from '../../auth/jwt.strategy'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
-import { PrismaService } from '../../database/prisma/prisma.service'
 import { z } from 'zod'
+import { CreateProductUseCase } from '../../../domain/forum/application/use-cases/create-product'
 
 const createProductBodySchema = z.object({
   title: z.string(),
   description: z.string(),
   priceInCents: z.coerce.number(),
   categoryId: z.string().uuid(),
+  attachments: z.array(z.string().uuid()),
 })
 
 const bodyValidationBody = new ZodValidationPipe(createProductBodySchema)
@@ -19,7 +27,7 @@ type CreateProductBodySchema = z.infer<typeof createProductBodySchema>
 @Controller('/products')
 @UseGuards(JwtAuthGuard)
 export class CreateProductController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private createProduct: CreateProductUseCase) {}
 
   @Post()
   @HttpCode(201)
@@ -27,17 +35,21 @@ export class CreateProductController {
     @Body(bodyValidationBody) body: CreateProductBodySchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { title, description, priceInCents, categoryId } = body
+    const { title, description, priceInCents, categoryId, attachments } = body
     const userId = user.sub
 
-    await this.prisma.product.create({
-      data: {
-        title,
-        description,
-        priceInCents,
-        ownerId: userId,
-        categoryId,
-      },
+    const result = await this.createProduct.execute({
+      title,
+      description,
+      priceInCents,
+      status: 'available',
+      ownerId: userId,
+      categoryId,
+      attachmentsIds: attachments,
     })
+
+    if (result.isLeft()) {
+      throw new BadRequestException()
+    }
   }
 }

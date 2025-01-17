@@ -23,6 +23,7 @@ export class PrismaProductMapper {
 
   static toPersistence(product: Product): Prisma.ProductUncheckedCreateInput {
     return {
+      id: product.id.toString(),
       title: product.title,
       description: product.description,
       priceInCents: product.priceInCents,

@@ -3,11 +3,15 @@ import { ProductRepository } from '../../../../../src/domain/forum/application/r
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { PrismaProductMapper } from '../mappers/prisma-product-mapper'
-import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { UniqueEntityID } from '../../../../core/entities/unique-entity-id'
+import { ProductAttachmentsRepository } from '../../../../domain/forum/application/repositories/product-attachments-repository'
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private productAttachmentRepository: ProductAttachmentsRepository,
+  ) {}
 
   async findById(id: UniqueEntityID): Promise<Product | null> {
     const product = await this.prisma.product.findFirst({
@@ -39,16 +43,28 @@ export class PrismaProductRepository implements ProductRepository {
     await this.prisma.product.create({
       data,
     })
+
+    await this.productAttachmentRepository.createMany(
+      product.attachments.getItems(),
+    )
   }
 
   async save(product: Product): Promise<void> {
     const data = PrismaProductMapper.toPersistence(product)
 
-    await this.prisma.product.update({
-      where: {
-        id: data.id,
-      },
-      data,
-    })
+    await Promise.all([
+      this.prisma.product.update({
+        where: {
+          id: data.id,
+        },
+        data,
+      }),
+      this.productAttachmentRepository.createMany(
+        product.attachments.getNewItems(),
+      ),
+      this.productAttachmentRepository.deleteMany(
+        product.attachments.getRemovedItems(),
+      ),
+    ])
   }
 }

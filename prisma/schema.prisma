@@ -23,7 +23,8 @@ model User {
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   products      Product[]
-  ProductsViews ProductView[]
+  productsViews ProductView[]
+  attachment    Attachment[]
 
   @@map("users")
 }
@@ -60,7 +61,8 @@ model Product {
 
   owner         User          @relation(fields: [ownerId], references: [id])
   category      Category      @relation(fields: [categoryId], references: [id])
-  ProductsViews ProductView[]
+  productsViews ProductView[]
+  attachments   Attachment[]
 
   @@map("products")
 }
@@ -75,4 +77,17 @@ model ProductView {
   product Product @relation(fields: [productId], references: [id])
 
   @@map("products_views")
+}
+
+model Attachment {
+  id        String  @id @default(uuid())
+  title     String
+  url       String
+  userId    String? @map("user_id")
+  productId String? @map("product_id")
+
+  user    User?    @relation(fields: [userId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@map("attachments")
 }
