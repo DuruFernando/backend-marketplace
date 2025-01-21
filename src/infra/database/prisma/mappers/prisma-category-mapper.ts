@@ -20,6 +20,7 @@ export class PrismaCategoryMapper {
     category: Category,
   ): Prisma.CategoryUncheckedCreateInput {
     return {
+      id: category.id.toString(),
       title: category.title,
       slug: category.slug.value,
       createdAt: category.createdAt,

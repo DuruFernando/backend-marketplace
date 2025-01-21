@@ -11,6 +11,8 @@ import { UploadAttachmentController } from './controllers/upload-attachment.cont
 import { StorageModule } from '../storage/storage.module'
 import { UploadAndCreateAttachmentUseCase } from '../../domain/forum/application/use-cases/upload-and-create-attachment'
 import { CreateProductUseCase } from '../../domain/forum/application/use-cases/create-product'
+import { EditProductController } from './controllers/edit-product.controller'
+import { EditProductUseCase } from '../../domain/forum/application/use-cases/edit-product'
 
 @Module({
   imports: [DatabaseModule, StorageModule],
@@ -22,11 +24,13 @@ import { CreateProductUseCase } from '../../domain/forum/application/use-cases/c
     FetchAllProductsController,
     FetchSellerProfileController,
     UploadAttachmentController,
+    EditProductController,
   ],
   providers: [
     FetchSellerProfileUseCase,
     UploadAndCreateAttachmentUseCase,
     CreateProductUseCase,
+    EditProductUseCase,
   ],
 })
 export class HttpModule {}

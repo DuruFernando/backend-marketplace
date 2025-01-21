@@ -1,7 +1,6 @@
 import { ProductRepository } from '../../src/domain/forum/application/repositories/product-repository'
 import { DomainEvents } from '../../src/core/events/domain-events'
 import { Product } from '../../src/domain/forum/enterprise/entities/product'
-import { UniqueEntityID } from '../../src/core/entities/unique-entity-id'
 import { ProductAttachmentsRepository } from '../../src/domain/forum/application/repositories/product-attachments-repository'
 
 export class InMemoryProductRepository implements ProductRepository {
@@ -11,8 +10,8 @@ export class InMemoryProductRepository implements ProductRepository {
     private productAttachmentsRepository: ProductAttachmentsRepository,
   ) {}
 
-  async findById(id: UniqueEntityID) {
-    const product = this.items.find((item) => item.id === id)
+  async findById(id: string) {
+    const product = this.items.find((item) => item.id.toString() === id)
 
     if (!product) {
       return null

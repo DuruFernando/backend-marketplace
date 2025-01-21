@@ -33,6 +33,7 @@ export class PrismaSellerMapper {
 
   static toPersistence(seller: Seller): Prisma.UserUncheckedCreateInput {
     return {
+      id: seller.id.toString(),
       name: seller.name,
       email: seller.email,
       phone: seller.phone,
