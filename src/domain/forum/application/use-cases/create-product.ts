@@ -1,4 +1,4 @@
-import { Either, right } from '../../../../core/either'
+import { Either, left, right } from '../../../../core/either'
 import { Injectable } from '@nestjs/common'
 import { Product } from '../../enterprise/entities/product'
 import { ProductRepository } from '../repositories/product-repository'
@@ -6,6 +6,7 @@ import { ProductAlreadyExistsError } from './errors/product-already-exists-error
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { ProductAttachment } from '../../enterprise/entities/product-attachment'
 import { ProductAttachmentList } from '../../enterprise/entities/product-attachment-list'
+import { ProductWithoutAttachmentError } from './errors/product-without-attachment-error'
 
 interface CreateProductUseCaseRequest {
   title: string
@@ -41,6 +42,10 @@ export class CreateProductUseCase {
     categoryId,
     attachmentsIds,
   }: CreateProductUseCaseRequest): Promise<CreateProductUseCaseResponse> {
+    if (attachmentsIds.length === 0) {
+      return left(new ProductWithoutAttachmentError(title))
+    }
+
     const product = Product.create({
       title,
       description,

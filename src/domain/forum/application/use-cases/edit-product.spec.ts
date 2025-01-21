@@ -6,6 +6,8 @@ import { UniqueEntityID } from '../../../../../src/core/entities/unique-entity-i
 import { makeProductAttachment } from '../../../../../test/factories/make-product-attachment'
 import { makeCategory } from '../../../../../test/factories/make-category'
 import { NotAllowedError } from '../../../../../src/core/errors/errors/not-allowed-error'
+import { ProductWithoutAttachmentError } from './errors/product-without-attachment-error'
+import { ProductAlreadySoldError } from './errors/product-already-sold-error'
 
 let inMemoryProductsRepository: InMemoryProductRepository
 let inMemoryProductAttachmentsRepository: InMemoryProductAttachmentsRepository
@@ -89,9 +91,48 @@ describe('Edit Product', () => {
 
     await inMemoryProductsRepository.create(newProduct)
 
+    inMemoryProductAttachmentsRepository.items.push(
+      makeProductAttachment({
+        productId: newProduct.id,
+        attachmentId: new UniqueEntityID('1'),
+      }),
+      makeProductAttachment({
+        productId: newProduct.id,
+        attachmentId: new UniqueEntityID('2'),
+      }),
+    )
+
     const result = await sut.execute({
       productId: newProduct.id.toValue(),
       ownerId: 'author-2',
+      title: 'Mesa de centro',
+      description: 'mesa para sala',
+      categoryId: category.id.toString(),
+      priceInCents: 24999,
+      status: 'available',
+      attachmentsIds: ['1', '2'],
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
+  })
+
+  it('should not be able to edit a product without an attachment', async () => {
+    const category = makeCategory()
+
+    const newProduct = makeProduct(
+      {
+        ownerId: new UniqueEntityID('author-1'),
+        categoryId: category.id,
+      },
+      new UniqueEntityID('product-1'),
+    )
+
+    await inMemoryProductsRepository.create(newProduct)
+
+    const result = await sut.execute({
+      productId: newProduct.id.toValue(),
+      ownerId: 'author-1',
       title: 'Mesa de centro',
       description: 'mesa para sala',
       categoryId: category.id.toString(),
@@ -101,7 +142,47 @@ describe('Edit Product', () => {
     })
 
     expect(result.isLeft()).toBe(true)
-    expect(result.value).toBeInstanceOf(NotAllowedError)
+    expect(result.value).toBeInstanceOf(ProductWithoutAttachmentError)
+  })
+
+  it('should not be able to edit a product already sold', async () => {
+    const category = makeCategory()
+
+    const newProduct = makeProduct(
+      {
+        ownerId: new UniqueEntityID('author-1'),
+        categoryId: category.id,
+        soldAt: new Date(),
+      },
+      new UniqueEntityID('product-1'),
+    )
+
+    await inMemoryProductsRepository.create(newProduct)
+
+    inMemoryProductAttachmentsRepository.items.push(
+      makeProductAttachment({
+        productId: newProduct.id,
+        attachmentId: new UniqueEntityID('1'),
+      }),
+      makeProductAttachment({
+        productId: newProduct.id,
+        attachmentId: new UniqueEntityID('2'),
+      }),
+    )
+
+    const result = await sut.execute({
+      productId: newProduct.id.toValue(),
+      ownerId: 'author-1',
+      title: 'Mesa de centro',
+      description: 'mesa para sala',
+      categoryId: category.id.toString(),
+      priceInCents: 24999,
+      status: 'available',
+      attachmentsIds: ['1', '2'],
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ProductAlreadySoldError)
   })
 
   it('should sync new and removed attachments when editing a product', async () => {

@@ -8,6 +8,8 @@ import { ProductAttachmentsRepository } from '../repositories/product-attachment
 import { ProductAttachmentList } from '../../enterprise/entities/product-attachment-list'
 import { ProductAttachment } from '../../enterprise/entities/product-attachment'
 import { UniqueEntityID } from '../../../../core/entities/unique-entity-id'
+import { ProductWithoutAttachmentError } from './errors/product-without-attachment-error'
+import { ProductAlreadySoldError } from './errors/product-already-sold-error'
 
 interface EditProductUseCaseRequest {
   productId: string
@@ -50,6 +52,14 @@ export class EditProductUseCase {
 
     if (!product) {
       return left(new ResourceNotFoundError())
+    }
+
+    if (attachmentsIds.length === 0) {
+      return left(new ProductWithoutAttachmentError(title))
+    }
+
+    if (product.soldAt) {
+      return left(new ProductAlreadySoldError(title))
     }
 
     if (ownerId !== product.ownerId.toString()) {
