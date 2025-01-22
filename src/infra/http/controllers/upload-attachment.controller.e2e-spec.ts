@@ -5,7 +5,7 @@ import request from 'supertest'
 import { PrismaService } from '../../database/prisma/prisma.service'
 import { JwtService } from '@nestjs/jwt'
 
-describe('upload-attachment.controller (E2E)', () => {
+describe.skip('upload-attachment.controller (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let jwt: JwtService

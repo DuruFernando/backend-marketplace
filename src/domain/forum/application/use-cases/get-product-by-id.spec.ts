@@ -35,11 +35,11 @@ describe('Get Product By Id', () => {
   })
 
   it('should be able to get a product by id', async () => {
-    const student = makeSeller({
+    const seller = makeSeller({
       name: 'John Doe',
     })
 
-    inMemorySellerRepository.items.push(student)
+    inMemorySellerRepository.items.push(seller)
 
     const newCategory = makeCategory({
       title: 'móvel',
@@ -50,7 +50,7 @@ describe('Get Product By Id', () => {
 
     const newProduct = makeProduct({
       title: 'mesa de centro',
-      ownerId: student.id,
+      ownerId: seller.id,
       categoryId: newCategory.id,
     })
 
@@ -73,13 +73,16 @@ describe('Get Product By Id', () => {
       id: newProduct.id.toString(),
     })
 
+    console.log(result)
+
     expect(result.value).toEqual({
       product: expect.objectContaining({
-        product: expect.objectContaining({
-          title: 'mesa de centro',
-        }),
+        title: 'mesa de centro',
         owner: expect.objectContaining({
           name: 'John Doe',
+        }),
+        category: expect.objectContaining({
+          title: 'móvel',
         }),
         attachments: expect.arrayContaining([
           expect.objectContaining({

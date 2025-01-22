@@ -4,8 +4,9 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { PrismaProductMapper } from '../mappers/prisma-product-mapper'
 import { ProductAttachmentsRepository } from '../../../../domain/forum/application/repositories/product-attachments-repository'
-import { ProductDetails } from 'src/domain/forum/enterprise/entities/value-objects/product-details'
+import { ProductDetails } from '../../../../domain/forum/enterprise/entities/value-objects/product-details'
 import { PrismaProductDetailsMapper } from '../mappers/prisma-product-details-mapper'
+import { ProductParams } from '../../../../core/repositories/product-params'
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepository {
@@ -49,14 +50,39 @@ export class PrismaProductRepository implements ProductRepository {
     return productDetails
   }
 
-  async findAll(): Promise<Product[]> {
-    const categories = await this.prisma.product.findMany({
+  async findAll({ q, status, page }: ProductParams): Promise<ProductDetails[]> {
+    const perPage = 20
+    const products = await this.prisma.product.findMany({
+      where: {
+        status,
+        OR: [
+          {
+            title: {
+              contains: q,
+              mode: 'insensitive',
+            },
+          },
+          {
+            description: {
+              contains: q,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+      take: perPage,
+      skip: (page - 1) * perPage,
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        owner: true,
+        category: true,
+        attachments: true,
+      },
     })
 
-    return categories.map(PrismaProductMapper.toDomain)
+    return products.map(PrismaProductDetailsMapper.toDomain)
   }
 
   async create(product: Product): Promise<void> {

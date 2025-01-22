@@ -9,40 +9,52 @@ export interface ProductDetailsProps {
     description: string
     priceInCents: number
     status: 'available' | 'sold' | 'cancelled'
-  }
-  owner: {
-    id: UniqueEntityID
-    name: string
-    phone: string
-    email: string
-    avatar?: {
-      id?: UniqueEntityID
-      url?: string
+    owner: {
+      id: UniqueEntityID
+      name: string
+      phone: string
+      email: string
+      avatar?: {
+        id?: UniqueEntityID
+        url?: string
+      }
     }
+    category: {
+      id: UniqueEntityID
+      title: string
+      slug: string
+    }
+    attachments: Attachment[]
   }
-  category: {
-    id: UniqueEntityID
-    title: string
-    slug: string
-  }
-  attachments: Attachment[]
 }
 
 export class ProductDetails extends ValueObject<ProductDetailsProps> {
-  get product() {
-    return this.props.product
+  get title() {
+    return this.props.product.title
+  }
+
+  get description() {
+    return this.props.product.description
+  }
+
+  get priceInCents() {
+    return this.props.product.priceInCents
+  }
+
+  get status() {
+    return this.props.product.status
   }
 
   get owner() {
-    return this.props.owner
+    return this.props.product.owner
   }
 
   get category() {
-    return this.props.category
+    return this.props.product.category
   }
 
   get attachments() {
-    return this.props.attachments
+    return this.props.product.attachments
   }
 
   static create(props: ProductDetailsProps) {

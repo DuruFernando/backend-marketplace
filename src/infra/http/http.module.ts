@@ -15,6 +15,7 @@ import { EditProductController } from './controllers/edit-product.controller'
 import { EditProductUseCase } from '../../domain/forum/application/use-cases/edit-product'
 import { GetProductByIdUseCase } from '../../domain/forum/application/use-cases/get-product-by-id'
 import { GetProductByIdController } from './controllers/get-product-by-id.controller'
+import { FetchAllProductsUseCase } from '../../domain/forum/application/use-cases/fetch-all-products'
 
 @Module({
   imports: [DatabaseModule, StorageModule],
@@ -35,6 +36,7 @@ import { GetProductByIdController } from './controllers/get-product-by-id.contro
     CreateProductUseCase,
     EditProductUseCase,
     GetProductByIdUseCase,
+    FetchAllProductsUseCase,
   ],
 })
 export class HttpModule {}

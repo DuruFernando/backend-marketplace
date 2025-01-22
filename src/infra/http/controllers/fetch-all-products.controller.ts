@@ -1,8 +1,14 @@
-import { Controller, Get, HttpCode, Query, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt.auth.guard'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpCode,
+  Query,
+} from '@nestjs/common'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
-import { PrismaService } from '../../database/prisma/prisma.service'
 import { z } from 'zod'
+import { FetchAllProductsUseCase } from '../../../../src/domain/forum/application/use-cases/fetch-all-products'
+import { ProductPresenter } from '../presenters/product-presenter'
 
 const pageQueryParamsSchema = z
   .string()
@@ -17,46 +23,39 @@ const searchQueryParamsSchema = z.string().optional().default('')
 const searchQueryValidationPipe = new ZodValidationPipe(searchQueryParamsSchema)
 type SearchQueryParamSchema = z.infer<typeof searchQueryParamsSchema>
 
+const statusParamsSchema = z
+  .enum(['available', 'sold', 'cancelled'])
+  .default('available')
+const statusValidationPipe = new ZodValidationPipe(statusParamsSchema)
+type StatusParamSchema = z.infer<typeof statusParamsSchema>
+
 @Controller('/products')
-@UseGuards(JwtAuthGuard)
 export class FetchAllProductsController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private fetchAllProducts: FetchAllProductsUseCase) {}
 
   @Get()
   @HttpCode(200)
   async handle(
     @Query('page', pageQueryValidationPipe) page: PageQueryParamSchema,
-    @Query('q', searchQueryValidationPipe) search: SearchQueryParamSchema,
+    @Query('q', searchQueryValidationPipe) q: SearchQueryParamSchema,
+    @Query('status', statusValidationPipe) status: StatusParamSchema,
   ) {
-    const perPage = 20
-
-    const products = await this.prisma.product.findMany({
-      where: {
-        status: 'available',
-        OR: [
-          {
-            title: {
-              contains: search,
-              mode: 'insensitive',
-            },
-          },
-          {
-            description: {
-              contains: search,
-              mode: 'insensitive',
-            },
-          },
-        ],
-      },
-      take: perPage,
-      skip: (page - 1) * perPage,
-      orderBy: {
-        createdAt: 'desc',
-      },
+    const result = await this.fetchAllProducts.execute({
+      page,
+      q,
+      status,
     })
 
+    if (result.isLeft()) {
+      throw new BadRequestException()
+    }
+
+    const { products } = result.value
+
+    const produto = products.map(ProductPresenter.toHTTP)
+
     return {
-      products,
+      products: produto,
     }
   }
 }

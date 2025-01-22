@@ -28,6 +28,12 @@ export class GetProductByIdUseCase {
       return left(new ResourceNotFoundError())
     }
 
+    const produto = right({
+      product,
+    })
+
+    console.log(produto.value)
+
     return right({
       product,
     })

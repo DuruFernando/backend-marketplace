@@ -28,20 +28,20 @@ export class PrismaProductDetailsMapper {
         description: raw.description,
         priceInCents: raw.priceInCents,
         status: raw.status,
-      },
-      owner: {
-        ...raw.owner,
-        avatar: {
-          id: new UniqueEntityID(raw.owner.attachment?.id),
-          url: raw.owner.attachment?.url,
+        owner: {
+          ...raw.owner,
+          avatar: {
+            id: new UniqueEntityID(raw.owner.attachment?.id),
+            url: raw.owner.attachment?.url,
+          },
+          id: new UniqueEntityID(raw.owner.id),
         },
-        id: new UniqueEntityID(raw.owner.id),
+        category: {
+          ...raw.category,
+          id: new UniqueEntityID(raw.category.id),
+        },
+        attachments: raw.attachments.map(PrismaAttachmentMapper.toDomain),
       },
-      category: {
-        ...raw.category,
-        id: new UniqueEntityID(raw.category.id),
-      },
-      attachments: raw.attachments.map(PrismaAttachmentMapper.toDomain),
     })
   }
 }
