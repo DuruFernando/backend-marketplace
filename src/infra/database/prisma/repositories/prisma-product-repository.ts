@@ -3,8 +3,9 @@ import { ProductRepository } from '../../../../../src/domain/forum/application/r
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { PrismaProductMapper } from '../mappers/prisma-product-mapper'
-import { UniqueEntityID } from '../../../../core/entities/unique-entity-id'
 import { ProductAttachmentsRepository } from '../../../../domain/forum/application/repositories/product-attachments-repository'
+import { ProductDetails } from 'src/domain/forum/enterprise/entities/value-objects/product-details'
+import { PrismaProductDetailsMapper } from '../mappers/prisma-product-details-mapper'
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepository {
@@ -13,10 +14,10 @@ export class PrismaProductRepository implements ProductRepository {
     private productAttachmentRepository: ProductAttachmentsRepository,
   ) {}
 
-  async findById(id: UniqueEntityID): Promise<Product | null> {
+  async findById(id: string): Promise<Product | null> {
     const product = await this.prisma.product.findFirst({
       where: {
-        id: id.toString(),
+        id,
       },
     })
 
@@ -25,6 +26,27 @@ export class PrismaProductRepository implements ProductRepository {
     }
 
     return PrismaProductMapper.toDomain(product)
+  }
+
+  async findDetailById(id: string): Promise<ProductDetails | null> {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        owner: true,
+        category: true,
+        attachments: true,
+      },
+    })
+
+    if (!product) {
+      return null
+    }
+
+    const productDetails = PrismaProductDetailsMapper.toDomain(product)
+
+    return productDetails
   }
 
   async findAll(): Promise<Product[]> {

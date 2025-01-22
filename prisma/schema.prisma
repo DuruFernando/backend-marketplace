@@ -24,7 +24,7 @@ model User {
 
   products      Product[]
   productsViews ProductView[]
-  attachment    Attachment[]
+  attachment    Attachment?
 
   @@map("users")
 }
@@ -83,7 +83,7 @@ model Attachment {
   id        String  @id @default(uuid())
   title     String
   url       String
-  userId    String? @map("user_id")
+  userId    String? @unique() @map("user_id")
   productId String? @map("product_id")
 
   user    User?    @relation(fields: [userId], references: [id])

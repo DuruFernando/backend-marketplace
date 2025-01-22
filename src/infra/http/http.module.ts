@@ -13,6 +13,8 @@ import { UploadAndCreateAttachmentUseCase } from '../../domain/forum/application
 import { CreateProductUseCase } from '../../domain/forum/application/use-cases/create-product'
 import { EditProductController } from './controllers/edit-product.controller'
 import { EditProductUseCase } from '../../domain/forum/application/use-cases/edit-product'
+import { GetProductByIdUseCase } from '../../domain/forum/application/use-cases/get-product-by-id'
+import { GetProductByIdController } from './controllers/get-product-by-id.controller'
 
 @Module({
   imports: [DatabaseModule, StorageModule],
@@ -25,12 +27,14 @@ import { EditProductUseCase } from '../../domain/forum/application/use-cases/edi
     FetchSellerProfileController,
     UploadAttachmentController,
     EditProductController,
+    GetProductByIdController,
   ],
   providers: [
     FetchSellerProfileUseCase,
     UploadAndCreateAttachmentUseCase,
     CreateProductUseCase,
     EditProductUseCase,
+    GetProductByIdUseCase,
   ],
 })
 export class HttpModule {}

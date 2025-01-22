@@ -1,20 +1,31 @@
 import { UniqueEntityID } from '../../../../../core/entities/unique-entity-id'
 import { ValueObject } from '../../../../../core/entities/value-object'
+import { Attachment } from '../attachment'
 
 export interface ProductDetailsProps {
   product: {
     id: UniqueEntityID
     title: string
     description: string
-    priceInCents: string
-    createdAt: Date
-    updatedAt?: Date | null
-    bestAnswerId?: UniqueEntityID | null
+    priceInCents: number
+    status: 'available' | 'sold' | 'cancelled'
   }
-  author: {
+  owner: {
     id: UniqueEntityID
     name: string
+    phone: string
+    email: string
+    avatar?: {
+      id?: UniqueEntityID
+      url?: string
+    }
   }
+  category: {
+    id: UniqueEntityID
+    title: string
+    slug: string
+  }
+  attachments: Attachment[]
 }
 
 export class ProductDetails extends ValueObject<ProductDetailsProps> {
@@ -22,8 +33,16 @@ export class ProductDetails extends ValueObject<ProductDetailsProps> {
     return this.props.product
   }
 
-  get author() {
-    return this.props.author
+  get owner() {
+    return this.props.owner
+  }
+
+  get category() {
+    return this.props.category
+  }
+
+  get attachments() {
+    return this.props.attachments
   }
 
   static create(props: ProductDetailsProps) {
